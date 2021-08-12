@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  bank_account: one
+  user: one
+  amount: 1.5
+  type: 
+  date_performed: 2021-08-09
+
+two:
+  bank_account: two
+  user: two
+  amount: 1.5
+  type: 
+  date_performed: 2021-08-09

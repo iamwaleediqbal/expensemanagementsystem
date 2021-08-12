@@ -1,0 +1,37 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Bank account:</strong>
+  <%= @transaction.bank_account_id %>
+</p>
+
+<p>
+  <strong>User:</strong>
+  <%= @transaction.user_id %>
+</p>
+
+<p>
+  <strong>Amount:</strong>
+  <%= @transaction.amount %>
+</p>
+
+<p>
+  <strong>Type:</strong>
+  <%= @transaction.type %>
+</p>
+
+<p>
+  <strong>Type:</strong>
+  <%= @transaction.category %>
+</p>
+
+<p>
+  <strong>Date performed:</strong>
+  <%= @transaction.date_performed %>
+</p>
+<p>
+  <strong>From Wallet:</strong>
+  <%= @transaction.from_wallet %>
+</p>
+<%= link_to 'Edit', edit_transaction_path(@transaction), class: 'btn btn-primary' %> |
+<%= link_to 'Back', transactions_path, class: 'btn btn-primary' %>

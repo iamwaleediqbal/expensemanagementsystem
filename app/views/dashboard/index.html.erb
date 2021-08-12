@@ -1,0 +1,19 @@
+<br>
+<h1>Expense Management System</h1>
+<div   class="col-xs-10 col-xs-offset-1">
+<br>
+<h3>Welcome  <%=current_user.name%></h3>
+<%= button_to 'Add New Transaction', new_transaction_path,class: " large btn btn-primary btn-floating btn-custom",:method => :get %>
+<br>
+<p>
+Your Remaining Wallet Balance is: <%=@dashboard[:balance]%>
+&nbsp
+Total Expenses: <%= @dashboard[:expense]%>
+&nbsp
+Total Income: <%= @dashboard[:income]%>
+</p>
+<%= pie_chart @dashboard, library: {backgroundColor: "transparent"}
+%>
+<br>
+</div>
+<br>

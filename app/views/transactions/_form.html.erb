@@ -1,0 +1,14 @@
+<%= simple_form_for @transaction do |form| %>
+ <%accounts = current_user.bank_accounts.order(:name).map{|account| [account.name, account.id]}%>
+    <br><%= form.input :bank_account_id do
+    form.select :bank_account_id, accounts,prompt: "Select your bank" end%>
+    <br><%= form.input :amount, :input_html => {:maxlength =>20,:style=> 'width: 300px'} %>
+    <br><%= form.input :category, :input_html => {:maxlength =>20,:style=> 'width: 300px'} %>
+    <br><%= form.input :type do 
+      form.select :type,["Income","Expense","BankTransfer"], prompt: "Select" end%>
+      <br><%=form.input :from_wallet, as: :boolean, boolean_style: :inline, prompt: "Do you want to send money from Waller? "%>
+    <br><%= form.input :date_performed, as: :date, html5: true, :input_html => {:maxlength =>20,:style=> 'width: 300px'} %>
+  
+    <br><%= form.button :submit, class: 'btn btn-success' %><br><br>
+    <br><br>
+<% end %>

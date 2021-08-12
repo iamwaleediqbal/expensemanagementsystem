@@ -1,0 +1,11 @@
+<%= simple_form_for @bank_account do |form| %>
+    <br><%= form.error_notification%>
+    <br><%= form.input :name , :input_html => {:maxlength =>20,:style=> 'width: 300px'}%>
+
+    <br><%= form.input :account_number, :input_html => {:maxlength =>20,:style=> 'width: 300px'} %>
+
+    <br><%= form.input :balance, :input_html => {:maxlength =>20,:style=> 'width: 300px'} %>
+  
+  
+    <br><%= form.button :submit, class: 'btn btn-success' %><br><br>
+ <% end %>

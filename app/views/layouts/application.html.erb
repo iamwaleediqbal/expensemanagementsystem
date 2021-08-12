@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ExpenseManagement</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag "https://www.gstatic.com/charts/loader.js" %>
+  
+ <%= csrf_meta_tags %>
+   <%= csp_meta_tag %>
+  </head>
+
+  <body>
+  
+  <nav class="nav nav-tabs flex-column flex-sm-row">
+    <a class="flex-sm-fill text-sm-center nav-link btn <%= active_class("/") %>" href="/">DashBoard</a>
+    <a class="flex-sm-fill text-sm-center nav-link btn <%= active_class("/transactions") %>" href="../transactions/">Transactions</a>
+    <a class="flex-sm-fill text-sm-center nav-link btn <%= active_class("/bank_accounts") %>" href="../bank_accounts/">Bank Accounts</a>
+  </nav>
+
+    <% if notice %>
+      <p class="alert alert-success"><%= notice %></p>
+    <% end %>
+    <% if alert %>
+      <p class="alert alert-danger"><%= alert %></p>
+    <% end %>
+    <%= yield %>
+    <footer class="page-footer navbar fixed-bottom footer-copyright py-3 font-small blue text-center">
+      <p class="navbar-text float-left">
+        <% if user_signed_in? %>
+
+          Logged in as <strong><%= current_user.email %></strong>.
+          <%= link_to 'Edit profile', edit_user_registration_path, :class => 'btn btn-dark' %> &nbsp
+          <%= link_to "Logout", destroy_user_session_path, method: :delete, :class => 'btn btn-dark'  %>
+        <% else %>
+          <%= link_to "Sign up", new_user_registration_path, :class => 'btn btn-dark'  %> |
+          <%= link_to "Login", new_user_session_path, :class => 'btn btn-dark'  %>
+
+        <% end %>
+
+      </p>
+  </footer>
+  </body>
+  
+</html>
