@@ -1,0 +1,3 @@
+class IncomePolicy < TransactionPolicy
+    
+end

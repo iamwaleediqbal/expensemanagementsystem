@@ -1,0 +1,3 @@
+class ExpensePolicy < TransactionPolicy
+    
+end

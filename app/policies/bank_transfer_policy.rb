@@ -1,0 +1,3 @@
+class BankTransferPolicy < TransactionPolicy
+    
+end

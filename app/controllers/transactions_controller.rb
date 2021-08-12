@@ -5,15 +5,18 @@ class TransactionsController < ApplicationController
   # GET /transactions or /transactions.json
   def index
     @transactions = Transaction.filter_by_user(current_user.id).page(params[:page]).per(5)
+    authorize @transactions
   end
 
   # GET /transactions/1 or /transactions/1.json
   def show
+    authorize @transactions
   end
 
   # GET /transactions/new
   def new
     @transaction = Transaction.new
+    authorize @transactions
   end
 
   # GET /transactions/1/edit
@@ -25,7 +28,7 @@ class TransactionsController < ApplicationController
     @transaction = current_user.transactions.new(create_transaction_params)
     p(@transaction.bank_account_id)
     @bank_account = current_user.bank_accounts.find(@transaction.bank_account_id)
-    
+    authorize @transactions
     if(@bank_account.account_number == current_user.id.to_s)
       #Ex:- :null => false
       if(@transaction.is_a? Income) 
@@ -214,6 +217,7 @@ class TransactionsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_transaction
       @transaction = Transaction.find(params[:id])
+      authorize @transaction
     end
 
     # Only allow a list of trusted parameters through.
