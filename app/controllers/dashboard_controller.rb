@@ -1,18 +1,21 @@
 class DashboardController < ApplicationController
-        
-    @dashboard = {}
-    def index
-        income = 0
-        expense = 0
-        balance = current_user.wallet.balance
-        current_user.transactions.each do |transaction|
-            if(transaction.is_a? Income)
-            income += transaction.amount
-            elsif(transaction.is_a? Expense)
-            expense += transaction.amount
-            end
-        end
-        p income
-        @dashboard = {income: income, expense: expense, balance: balance}
+  @dashboard = {}
+  def index
+    income = current_user.incomes.sum(:amount)
+    expense = current_user.expenses.sum(:amount)
+    if(!current_user.wallet)
+      current_user.wallet = Wallet.new
+      current_user.wallet.balance = 0
+      current_user.wallet.save
     end
+    if(current_user.wallet.balance < 0)
+      current_user.wallet.balance = 0
+      current_user.wallet.save
+    end
+    
+    balance = current_user.wallet.balance
+    lent = current_user.wallet.amount_lent
+    borrow = current_user.wallet.amount_borrowed
+    @dashboard = {income: income, expense: expense, balance: balance, lent: lent, borrow: borrow}
+  end
 end

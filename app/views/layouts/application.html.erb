@@ -5,20 +5,40 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
-   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
-  <%= javascript_include_tag "https://www.gstatic.com/charts/loader.js" %>
-  
- <%= csrf_meta_tags %>
-   <%= csp_meta_tag %>
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+    <%= javascript_include_tag "https://www.gstatic.com/charts/loader.js" %>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
+
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
   </head>
 
   <body>
+  <div class= "container" >
+  <% if user_signed_in? %>
+
+    <h3>Expense Management System </h3>
+    <nav class="nav nav-tabs flex-column flex-sm-row">
+    
+      <a class="flex-sm-fill text-sm-center nav-link btn <%= active_class("/") %>" href="/">DashBoard</a>
+      <a class="flex-sm-fill text-sm-center nav-link btn <%= active_class("/transactions") %>" href="/transactions/">Transactions</a>
+      <a class="flex-sm-fill text-sm-center nav-link btn <%= active_class("/bank_accounts") %>" href="/bank_accounts/">Bank Accounts</a>
+      <a class="flex-sm-fill text-sm-center nav-link btn <%= active_class("/groups") %>" href="/groups">Group Expense</a>
+      <div class="dropdown">
+        <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <%=current_user.name %>
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <%= link_to 'Edit profile', edit_user_registration_path, :class => 'dropdown-item' %>
+          <%= link_to "Logout", destroy_user_session_path, method: :delete, :class => 'dropdown-item'  %> 
+          
+        </div>
+      </div>
+
+    </nav>
   
-  <nav class="nav nav-tabs flex-column flex-sm-row">
-    <a class="flex-sm-fill text-sm-center nav-link btn <%= active_class("/") %>" href="/">DashBoard</a>
-    <a class="flex-sm-fill text-sm-center nav-link btn <%= active_class("/transactions") %>" href="../transactions/">Transactions</a>
-    <a class="flex-sm-fill text-sm-center nav-link btn <%= active_class("/bank_accounts") %>" href="../bank_accounts/">Bank Accounts</a>
-  </nav>
+  <% end %>
 
     <% if notice %>
       <p class="alert alert-success"><%= notice %></p>
@@ -26,22 +46,9 @@
     <% if alert %>
       <p class="alert alert-danger"><%= alert %></p>
     <% end %>
+    
     <%= yield %>
-    <footer class="page-footer navbar fixed-bottom footer-copyright py-3 font-small blue text-center">
-      <p class="navbar-text float-left">
-        <% if user_signed_in? %>
-
-          Logged in as <strong><%= current_user.email %></strong>.
-          <%= link_to 'Edit profile', edit_user_registration_path, :class => 'btn btn-dark' %> &nbsp
-          <%= link_to "Logout", destroy_user_session_path, method: :delete, :class => 'btn btn-dark'  %>
-        <% else %>
-          <%= link_to "Sign up", new_user_registration_path, :class => 'btn btn-dark'  %> |
-          <%= link_to "Login", new_user_session_path, :class => 'btn btn-dark'  %>
-
-        <% end %>
-
-      </p>
-  </footer>
+    </div>
   </body>
   
 </html>

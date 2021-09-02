@@ -1,0 +1,33 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Group Expense Memberships</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Group expense</th>
+      <th>Borrower</th>
+      <th>Lenter</th>
+      <th>Amount</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @group_expense_memberships.each do |group_expense_membership| %>
+      <tr>
+        <td><%= group_expense_membership.group_expense_id %></td>
+        <td><%= group_expense_membership.borrower_id %></td>
+        <td><%= group_expense_membership.lenter_id %></td>
+        <td><%= group_expense_membership.amount %></td>
+        <td><%= link_to 'Show', group_expense_membership %></td>
+        <td><%= link_to 'Edit', edit_group_expense_membership_path(group_expense_membership) %></td>
+        <td><%= link_to 'Destroy', group_expense_membership, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Group Expense Membership', new_group_expense_membership_path %>

@@ -1,0 +1,16 @@
+
+<%= simple_form_for(@group_expense_membership) do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+  <div class="form-inputs">
+    <%= f.association :group_expense %>
+    <%= f.association :borrower %>
+    <%= f.association :lenter %>
+    <%= f.input :amount %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

@@ -1,0 +1,58 @@
+<h1>Editing Group Expense</h1>
+<div data-conroller="expense">
+<%= simple_form_for(@group_expense, {:url => group_group_expense_path(@group)}) do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+  <div class="form-inputs">
+    <%= f.input :expense, disabled: true %>
+    <div data-action = 'click->expense#hideTable'>
+      <%= f.input :equal, label: "Equally Distribute", disabled: true%>
+    </div>
+    
+  </div>
+  <div data-action="change->expense#hideTable" data-expense-target = "percent"><%= f.input :percent, label: "Percentage Distribution", disabled: true%></div>
+    
+  <div data-target="table">
+  <table class = "table table-striped table-bordered table-hover table-sm" border="10" width = "500">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Name</th>
+      <th>Amount</th>
+      <th>Settled</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+  
+  <tbody>
+  <%=f.fields_for(:memberships) do |u|-%>
+    <%=for m in @group_expense.group_expense_memberships do  -%> 
+     <tr> 
+        <td>
+          <%= m.amount != nil ? (check_box_tag 'id[]',m.id, true,disabled: true) : (check_box_tag 'id[]',m.id, false,disabled: true)%>
+        </td>
+        <td>
+          <%=m.borrower.name%>
+        </td>
+        <td>
+          <%= (number_field_tag 'amount[]',m.amount, disabled: true)
+          #u.input :amount, multiple: true, input_html:{"data-action": "click->expense#control"}
+          %>
+        </td>
+        <td>
+          <%= m.borrower.id==current_user.id ? (m.settled) : (m.amount != nil && m.settled == true) ? (check_box_tag 'set[]',m.id, true,disabled: true): (check_box_tag 'set[]',m.id, false,disabled: false)%>
+        </td>
+      </tr>
+    <div class = "hidden"><%end%></div>
+  <%end%>
+</tbody>
+</table>
+  </div>
+  <div class="form-actions">
+    <%= f.button :submit, class:"btn btn-primary" %>
+  </div>
+<% end %>
+</div>
+
+
+<%= link_to 'Back', group_group_expenses_path %>

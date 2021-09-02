@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Users::RegistrationsController < Devise::RegistrationsController
- # before_action :configure_sign_up_params, only: [:create]
+  #before_action :configure_sign_up_params, only: [:create]
   #before_action :configure_account_update_params, only: [:update]
   # GET /resource/sign_up
   def new
@@ -17,12 +17,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
       current_user.wallet = Wallet.new
       current_user.wallet.balance = 0
       current_user.wallet.save
-      @b = current_user.bank_accounts.new
-      @b.name = "Personal Wallet"
-      @b.account_number = current_user.id
-      @b.balance = current_user.wallet.balance
-      p @b
-      @b.save
       
     end
   end
@@ -39,7 +33,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # DELETE /resource
   def destroy
-    current_user.wallet.destroy
     super
   end
 

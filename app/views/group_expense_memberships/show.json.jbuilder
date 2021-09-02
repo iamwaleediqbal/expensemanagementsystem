@@ -1,0 +1,1 @@
+json.partial! "group_expense_memberships/group_expense_membership", group_expense_membership: @group_expense_membership

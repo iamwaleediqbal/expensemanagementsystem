@@ -1,14 +1,34 @@
+
 <%= simple_form_for @transaction do |form| %>
- <%accounts = current_user.bank_accounts.order(:name).map{|account| [account.name, account.id]}%>
-    <br><%= form.input :bank_account_id do
-    form.select :bank_account_id, accounts,prompt: "Select your bank" end%>
-    <br><%= form.input :amount, :input_html => {:maxlength =>20,:style=> 'width: 300px'} %>
-    <br><%= form.input :category, :input_html => {:maxlength =>20,:style=> 'width: 300px'} %>
-    <br><%= form.input :type do 
-      form.select :type,["Income","Expense","BankTransfer"], prompt: "Select" end%>
-      <br><%=form.input :from_wallet, as: :boolean, boolean_style: :inline, prompt: "Do you want to send money from Waller? "%>
+  <div data-controller = "check">
+    <div data-action = "change->check#toggle">
+      <%= form.input :type, collection: ["Income","Expense","BankTransfer"], prompt: "Select your Transaction type", selected: "Income", input_html: { class: 'form-select' ,:style=> 'width: 300px', 'data-check-target': 'type'} %>  
+    </div>
+    <br>
+    <div data-check-target = "from"data-action= "change->check#toggleTransaction">
+      <%=
+        form.input :transfer_from_id, collection: @accounts, prompt: "Select your Bank/Wallet", input_html: { class: 'form-select', 'data-check-target': 'bank' ,:style=> 'width: 300px' }
+      %>
+      <%=
+        form.hidden_field :transfer_from_type,  input_html: {'data-check-target': 'hidden' }
+      %>
+    </div>
+    <br>
+    <div  data-check-target = "class" data-action= "click->check#toggle" class= "hidden">
+      <%=
+        form.input :transfer_to_id, collection: @accounts, prompt: "Select your Bank/Wallet", input_html: { class: 'form-select',:style=> 'width: 300px','data-check-target': 'transfer' }
+      %>
+      <%=
+        form.hidden_field :transfer_to_type,  input_html: {'data-check-target': 'hidden' }
+      %>
+    </div>
+    <br><%=form.input :amount, :input_html => {:maxlength =>20,:style=> 'width: 300px'} %>
+
+    <br><%= form.input :category, collection: Transaction.categories.keys, prompt: "Select your Category", selected: "food", input_html: { class: 'form-select' ,:style=> 'width: 300px'}  %>
+    <br>
+      
     <br><%= form.input :date_performed, as: :date, html5: true, :input_html => {:maxlength =>20,:style=> 'width: 300px'} %>
-  
-    <br><%= form.button :submit, class: 'btn btn-success' %><br><br>
-    <br><br>
+  </div>
+  <br><%= form.button :submit, class: 'btn btn-success' %><br><br>
+  <br><br>
 <% end %>

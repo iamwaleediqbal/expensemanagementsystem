@@ -1,0 +1,38 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Group Expenses</h1>
+<table class = "table table-striped table-bordered table-hover table-sm" border="10" width = "500">
+  <thead>
+    <tr>
+      <th>Group</th>
+      <th>Expense</th>
+      <th>Equal Division</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+  <tbody>
+  <%= paginate @group_expenses%>
+    
+    <% @group_expenses.each do |group_expense| %>
+    <div class= "hidden">
+      <%=@q =group_expense.group_expense_memberships.where(borrower: current_user)%>
+    </div>
+      <tr>
+        <td><%= group_expense.group.name %></td>
+        <td><%= group_expense.expense %></td>
+        <td><%= group_expense.equal %></td>
+         <td><%=group_expense.creator == current_user ? (link_to 'Settle', edit_group_group_expense_path(@group,group_expense) , class: 'btn btn-primary') : (group_expense.group_expense_memberships.find_by_borrower_id(current_user.id).amount) %></td>
+        <td><%= group_expense.creator == current_user ? (link_to 'Destroy', [@group,group_expense], method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger') : "Borrowed Amount" %></td>
+        <td><%= @q.size!=0 ? (@q[0].settled == true ? "Cleared" : "To be Paid"): " "%></td>
+      </tr>
+    <% end %>
+    <%= page_entries_info @group_expenses %>
+  
+  </tbody>
+</table>
+
+<br>
+
+<br>
+
+<%= link_to 'New Group Expense', new_group_group_expense_path(@group),class: " large btn btn-primary btn-floating btn-custom" %>

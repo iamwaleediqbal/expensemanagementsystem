@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Group:</strong>
+  <%= @group_expense.group_id %>
+</p>
+
+<p>
+  <strong>Expense:</strong>
+  <%= @group_expense.expense %>
+</p>
+
+<p>
+  <strong>Type:</strong>
+  <%= @group_expense.type %>
+</p>
+
+<%= link_to 'Edit', edit_group_expense_path(@group_expense) %> |
+<%= link_to 'Back', group_expenses_path %>

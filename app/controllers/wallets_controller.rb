@@ -8,15 +8,18 @@ class WalletsController < ApplicationController
 
   # GET /wallets/1 or /wallets/1.json
   def show
+    authorize @wallet
   end
 
   # GET /wallets/new
   def new
     @wallet = Wallet.new
+    authorize @wallet
   end
 
   # GET /wallets/1/edit
   def edit
+    authorize @wallet
   end
 
   # POST /wallets or /wallets.json

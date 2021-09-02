@@ -18,6 +18,9 @@ body{
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     
 }
+.hidden{
+    display:none;
+}
 .btn-custom{
     border-radius: 30px;
     float: right;
@@ -31,7 +34,7 @@ body{
     display: inline-block;
 }
 a:visited{
-    color:white;
+    color:darkslategrey;
 }
 .nav-link:visited{
     color:black;
@@ -39,16 +42,17 @@ a:visited{
 
 .pagination a, .pagination span.current, .pagination span.gap {
     float: left;
-    padding: 0 14px;
+    padding: 0 10px;
     line-height: 38px;
     text-decoration: none;
-    background-color: blue;
-    border: 1px solid #DDD;
+    background-color: white;
+    border: 1px solid black;
+	color: red;
     border-left-width: 0;
 }
 
 .pagination {
-    border-left: 1px solid #ddd;
+    border-left: 1px solid black;
     .first{
         padding : 0;
         float: none;
@@ -75,3 +79,102 @@ a:visited{
         border: none;
     }
 } 
+@charset "utf-8";
+/* CSS Document */
+.container{
+	height: 50%;
+
+	/* Center and scale the image nicely */
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	/* background-image: 
+	url("./Finance.png"); */
+}
+body {
+	background-color: white;
+	font-family: Arial, Helvetica, sans-serif;
+}
+a:hover, a:active, a:focus, a:visited {
+	outline: none;
+	border: 0;
+	text-decoration: none;
+	color: black;
+}
+.bg-white {
+	background-color: #FFF;
+	margin: 10px 0;
+	padding: 5px;
+}
+.logo {
+	font-size: 18px;
+	font-weight: bold;
+	margin: 22px;
+	float: left;
+	color: #27D2C1;
+	text-shadow: 1px 1px 5px rgba(48, 48, 48, 0.26);
+}
+.header .ad-block {
+	background-color: #F0F0F0;
+	width: 60%;
+	float: right;
+	height: 50px;
+	margin: 10px;
+}
+.left-sidebar .ad-block {
+	background-color: #F0F0F0;
+	height: 80px;
+	margin: 10px 10px 15px 10px;
+}
+.main-content .ad-block {
+	background-color: #F0F0F0;
+	height: 80px;
+	width: 30%;
+	margin: 10px;
+}
+.right-sidebar .ad-block {
+	background-color: #F0F0F0;
+	height: 80px;
+	margin: 10px 10px 15px 10px;
+}
+.header {
+	height: 80px;
+}
+.footer, .middle-left, .middle-right, .bottom-left-block, .bottom-middle-block, .bottom-right-block, .bottom-content {
+	height: 60px;
+}
+.left-sidebar, .right-sidebar {
+	height: 360px;
+}
+.main-content  {
+	height: 200px;
+}
+.footer .copyright {
+	color: #A5A5A5;
+	text-align: center;
+	margin: 16px;
+}
+@media (max-width:767px) {
+.header {
+	height: auto;
+}
+.logo {
+	margin: 15px;
+	float: none;
+	text-align: center;
+}
+.header .ad-block {
+	height: 50px;
+	width: auto;
+	margin: 10px;
+	float: none;
+}
+.footer {
+		height: auto;
+}
+.main-content .ad-block {
+	background-color: #F0F0F0;
+	height: 80px;
+	width: auto;
+}
+}

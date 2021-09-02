@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  group_expense: one
+  borrower: one
+  lenter: one
+  amount: 1.5
+
+two:
+  group_expense: two
+  borrower: two
+  lenter: two
+  amount: 1.5

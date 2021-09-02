@@ -63,3 +63,7 @@ gem 'simple_form'
 gem 'chartkick'
 gem 'groupdate'
 gem 'kaminari'
+gem 'stimulus-rails'
+gem 'stripe'
+gem 'devise_invitable'
+# gem "hotwire-rails", "~> 0.1.3"

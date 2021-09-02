@@ -4,6 +4,7 @@ class BankAccountsController < ApplicationController
   def index
     @bank_accounts = BankAccount.filter_by_user(current_user.id).page(params[:page]).per(5)
     p @bank_accounts
+    authorize @bank_accounts
   end
 
   # GET /bank_accounts/1 or /bank_accounts/1.json
@@ -14,6 +15,7 @@ class BankAccountsController < ApplicationController
   def new
     @bank_account = BankAccount.new
     p @bank_account
+    authorize @bank_account
   end
 
   # GET /bank_accounts/1/edit
@@ -23,6 +25,7 @@ class BankAccountsController < ApplicationController
   # POST /bank_accounts or /bank_accounts.json
   def create
     @bank_account =  current_user.bank_accounts.new(bank_account_params.clone)
+    authorize @bank_account
     respond_to do |format|
       if @bank_account.save
         format.html { redirect_to @bank_account, notice: "Bank account was successfully created." }
@@ -63,6 +66,7 @@ class BankAccountsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_bank_account
       @bank_account = BankAccount.find(params[:id])
+      authorize @bank_account
     end
 
     # Only allow a list of trusted parameters through.

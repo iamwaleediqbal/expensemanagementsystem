@@ -1,6 +1,6 @@
 class TransactionPolicy < ApplicationPolicy
     def index?
-        true
+        user.present?
     end
      
     def create?
@@ -8,9 +8,9 @@ class TransactionPolicy < ApplicationPolicy
     end
     
     def show?
-        user.present?
+        return true if user.present? && user == transaction.user
     end
-    
+
     def update?
         return true if user.present? && user == transaction.user
     end

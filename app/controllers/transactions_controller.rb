@@ -4,73 +4,118 @@ class TransactionsController < ApplicationController
   
   # GET /transactions or /transactions.json
   def index
-    @transactions = Transaction.filter_by_user(current_user.id).page(params[:page]).per(5)
+    @transactions = current_user.transactions.order('created_at DESC').page(params[:page]).per(5)
     authorize @transactions
   end
 
   # GET /transactions/1 or /transactions/1.json
   def show
-    authorize @transactions
   end
-
+  
   # GET /transactions/new
   def new
-    @transaction = Transaction.new
-    authorize @transactions
+    @transaction = current_user.transactions.new
+    @accounts = []
+    current_user.bank_accounts.each do |bank_account| @accounts.push([bank_account.name,bank_account.id]) end
+    @accounts.push([current_user.wallet.class.name,current_user.wallet.id])
+    authorize @transaction
   end
+  
+  def handle_change
+    if(@transaction.transfer_from_type == "Wallet")
+        
+      if(@transaction.is_a? Income)
+        current_user.wallet.balance += @transaction.amount
+        current_user.wallet.save
+      else
+        current_user.wallet.balance -= @transaction.amount
+        current_user.wallet.save
+      end
+      if(@transaction.transfer_to_id != nil)
+        @b = current_user.bank_accounts.find(@transaction.transfer_to_id)
+        @b.balance += @transaction.amount
+        @b.save
+      end
 
+    elsif(@transaction.transfer_from_type == "BankAccount")
+      @b = current_user.bank_accounts.find(@transaction.transfer_from_id)
+      if(@transaction.is_a? Income)
+        @b.balance += @transaction.amount
+        @b.save
+      else
+        @b.balance -= @transaction.amount
+        @b.save
+      end
+      if(@transaction.transfer_to_id != nil)
+        current_user.wallet.balance += @transaction.amount
+        current_user.wallet.save
+      end
+    end
+
+  end
+  def handle_update
+    if(@transaction.transfer_from_type == "Wallet")
+      if(@transaction.is_a? Income)
+        current_user.wallet.balance -= @transaction.amount
+        current_user.wallet.save
+      else
+        current_user.wallet.balance += @transaction.amount
+        current_user.wallet.save
+      end
+      if(@transaction.transfer_to_id != nil)
+        @b = current_user.bank_accounts.find(@transaction.transfer_to_id)
+        @b.balance -= @transaction.amount
+        @b.save
+      end
+
+    elsif(@transaction.transfer_from_type == "BankAccount")
+      @b = current_user.bank_accounts.find(@transaction.transfer_from_id)
+      if(@transaction.is_a? Income)
+        @b.balance -= @transaction.amount
+        @b.save
+      else
+        @b.balance += @transaction.amount
+        @b.save
+      end
+      if(@transaction.transfer_to_id != nil)
+        current_user.wallet.balance -= @transaction.amount
+        current_user.wallet.save
+      end
+    end
+
+  end
   # GET /transactions/1/edit
   def edit
   end
 
   # POST /transactions or /transactions.json
   def create
+    params[:transaction].delete(:transfer_from)
     @transaction = current_user.transactions.new(create_transaction_params)
-    p(@transaction.bank_account_id)
-    @bank_account = current_user.bank_accounts.find(@transaction.bank_account_id)
-    authorize @transactions
-    if(@bank_account.account_number == current_user.id.to_s)
-      #Ex:- :null => false
-      if(@transaction.is_a? Income) 
-        @wallet = current_user.wallet
-        @wallet.balance += @transaction.amount
-        p @wallet
-        @wallet.save
-      elsif(@transaction.is_a? Expense)
-        @wallet = current_user.wallet
-        @wallet.balance -= @transaction.amount
-        p @wallet
-        @wallet.save
-      else
-        raise "Kindly Select Bank For sending from or to wallet" 
-      end
-    
-    end
-    if(@transaction.is_a? Income)
-        @bank_account = current_user.bank_accounts.find(@transaction.bank_account_id)
-        @bank_account.balance += @transaction.amount
-        @bank_account.save
-    elsif(@transaction.is_a? Expense)
-        @bank_account = current_user.bank_accounts.find(@transaction.bank_account_id)
-        @bank_account.balance -= @transaction.amount
-        @bank_account.save
-    else
-        if(@transaction.from_wallet)
-          current_user.wallet.balance -= @transaction.amount
-          current_user.wallet.save
-          @bank_account = current_user.bank_accounts.find(@transaction.bank_account_id)
-          @bank_account.balance += @transaction.amount
-          @bank_account.save
-        else
-          current_user.wallet.balance += @transaction.amount
-          current_user.wallet.save
-          @bank_account = current_user.bank_accounts.find(@transaction.bank_account_id)
-          @bank_account.balance -= @transaction.amount
-          @bank_account.save
+    if(@transaction.is_a?(Expense) || @transaction.is_a?(BankTransfer))
+      if(@transaction.transfer_from_type == "Wallet")
+        if(current_user.wallet.balance < @transaction.amount)
+          flash[:alert] = "You have low Balance"
+          redirect_to request.referrer
+          return
         end
+      end
+      if( @transaction.transfer_from_type == "BankAccount")
+        if( current_user.bank_accounts.find(@transaction.transfer_from_id).balance < @transaction.amount)
+          flash[:alert] = "You have low Balance"
+          redirect_to request.referrer
+          return
+        end
+      end
     end
+      
+    p @transaction
+    authorize @transaction
+    
     respond_to do |format|
       if @transaction.save
+        
+        handle_change
         format.html { redirect_to @transaction, notice: "Transaction was successfully created." }
         format.json { render :show, status: :created, location: @transaction }
       else
@@ -82,79 +127,10 @@ class TransactionsController < ApplicationController
 
   # PATCH/PUT /transactions/1 or /transactions/1.json
   def update
-
-    @t = Transaction.new(transaction_params)
-    @tran = current_user.transactions.find(@transaction.id)
-    p @tran
-    @bank_account = current_user.bank_accounts.find(@transaction.bank_account_id)
-    @bank = current_user.bank_accounts.find(@t.bank_account_id)
-    
-    if(@bank.account_number == current_user.id.to_s && (!@t.is_a? (Expense)) && (!@t.is_a? (Income)))
-      raise "Kindly Select Bank to send money to or from wallet"
-    end
-    p current_user.wallet
-    if(@bank_account.account_number == current_user.id.to_s)
-      current_user.wallet.balance += (@tran.is_a? (Expense)) ? @tran.amount : (-1)*@tran.amount
-      current_user.wallet.save
-    elsif(@transaction.is_a? BankTransfer)
-      
-      @b = @current_user.bank_accounts.find(@tran.bank_account_id)
-      if(@transaction.from_wallet)
-        @b.balance -= @transaction.amount
-        current_user.wallet.balance += @transaction.amount
-      else
-        @b.balance += @transaction.amount
-        current_user.wallet.balance += @transaction.amount
-      end
-      @b.save
-      current_user.wallet.save
-    else
-      @b = @current_user.bank_accounts.find(@tran.bank_account_id)
-      @b.balance += (@tran.is_a? (Expense)) ? @tran.amount : (-1)*@tran.amount
-      @b.save
-    end
+    handle_update
     respond_to do |format|
       if @transaction.update(transaction_params)
-        @bank_account = current_user.bank_accounts.find(@transaction.bank_account_id)
-        if(@bank_account.account_number == current_user.id.to_s)
-          if(@transaction.is_a? Income) 
-            @wallet = current_user.wallet
-            @wallet.balance += @transaction.amount
-            p @wallet
-            @wallet.save
-          elsif(@transaction.is_a? Expense)
-            @wallet = current_user.wallet
-            @wallet.balance -= @transaction.amount
-            p @wallet
-            @wallet.save
-          else
-            raise "Kindly Select Bank For sending from or to wallet" 
-          end
-        
-        end
-        if(@transaction.is_a? Income)
-            @bank_account = current_user.bank_accounts.find(@transaction.bank_account_id)
-            @bank_account.balance += @transaction.amount
-            @bank_account.save
-        elsif(@transaction.is_a? Expense)
-            @bank_account = current_user.bank_accounts.find(@transaction.bank_account_id)
-            @bank_account.balance -= @transaction.amount
-            @bank_account.save
-        else
-            if(@transaction.from_wallet)
-              current_user.wallet.balance -= @transaction.amount
-              current_user.wallet.save
-              @bank_account = current_user.bank_accounts.find(@transaction.bank_account_id)
-              @bank_account.balance += @transaction.amount
-              @bank_account.save
-            else
-              current_user.wallet.balance += @transaction.amount
-              current_user.wallet.save
-              @bank_account = current_user.bank_accounts.find(@transaction.bank_account_id)
-              @bank_account.balance -= @transaction.amount
-              @bank_account.save
-            end
-        end  
+        handle_change
         format.html { redirect_to @transaction, notice: "Transaction was successfully updated." }
         format.json { render :show, status: :ok, location: @transaction }
       else
@@ -166,46 +142,7 @@ class TransactionsController < ApplicationController
 
   # DELETE /transactions/1 or /transactions/1.json
   def destroy
-    p(@transaction.bank_account_id)
-    @bank_account = current_user.bank_accounts.find(@transaction.bank_account_id)
-    
-    if(@bank_account.account_number == current_user.id.to_s)
-      if(@transaction.is_a? Income) 
-        @wallet = current_user.wallet
-        @wallet.balance -= @transaction.amount
-        p @wallet
-        @wallet.save
-      elsif(@transaction.is_a? Expense)
-        @wallet = current_user.wallet
-        @wallet.balance += @transaction.amount
-        p @wallet
-        @wallet.save
-      end
-    else
-      if(@transaction.is_a? Income)
-        @bank_account = current_user.bank_accounts.find(@transaction.bank_account_id)
-        @bank_account.balance -= @transaction.amount
-        @bank_account.save
-      elsif(@transaction.is_a? Expense)
-        @bank_account = current_user.bank_accounts.find(@transaction.bank_account_id)
-        @bank_account.balance += @transaction.amount
-        @bank_account.save
-      else
-        if(@transaction.from_wallet)
-          current_user.wallet.balance += @transaction.amount
-          current_user.wallet.save
-          @bank_account.balance -= @transaction.amount
-          @bank_account.save
-        else
-          current_user.wallet.balance -= @transaction.amount
-          current_user.wallet.save
-          @bank_account.balance += @transaction.amount
-          @bank_account.save
-        end
-      end
-
-    end
-    
+    handle_update
     @transaction.destroy
     respond_to do |format|
       format.html { redirect_to transactions_url, notice: "Transaction was successfully destroyed." }
@@ -227,7 +164,7 @@ class TransactionsController < ApplicationController
       # elsif params.has_key? :expense
       #   params[:transaction] = params.delete :expense
       # end
-      params.require(:transaction).permit(:bank_account_id, :user_id, :amount, :type,:from_wallet, :date_performed, :category)
+      params.require(:transaction).permit(:transfer_from_id,:transfer_from_type, :transfer_to_id, :transfer_to_type, :user_id, :amount, :type,:from_wallet, :date_performed, :category)
     end
     def transaction_params
       # if params.has_key? :income
@@ -235,6 +172,6 @@ class TransactionsController < ApplicationController
       # elsif params.has_key? :expense
       #   params[:transaction] = params.delete :expense
       # end
-      params.require(params[:type].to_sym).permit(:bank_account_id, :user_id, :amount, :type, :from_wallet, :date_performed, :category)
+      params.require(params[:type].to_sym).permit(:transfer_from_id,:transfer_from_type, :transfer_to_id, :transfer_to_type, :user_id, :amount, :type, :from_wallet, :date_performed, :category)
     end
 end

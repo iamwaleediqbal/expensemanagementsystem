@@ -1,0 +1,66 @@
+
+<div data-controller="expense">
+  <%= simple_form_for(@group_expense, {:url => group_group_expenses_path(@group)}) do |f| %>
+    <%i = 0
+    index = 0%>
+    <%= f.error_notification %>
+    <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+    <div class="form-inputs">
+      <%= f.input :expense, input_html:{"data-action": "input->expense#changeFirst", "data-expense-target": "expense","data-index": index }%>
+        <%= f.input :equal, label: "Equally Distribute",input_html:{"data-action": "change->expense#hideTable", "data-size": "#{@group.memberships.size}", "data-expense-target": "table" }%>
+    </div>
+
+    <div data-action="change->expense#hideTable" data-expense-target = "percent"><%= f.input :percent, label: "Percent Distribution"%></div>
+    <div>Select Account
+    <%= select_tag 'bank',options_for_select(@accounts), :class => "form-select",:label => "Select Account" %>
+    </div>
+    <br>
+    <table class = "table table-striped table-bordered table-hover table-sm" border="10" width = "500">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Name</th>
+        <th>Amount</th>
+        <th>Settled</th>
+        <th colspan="3"></th>
+      </tr>
+    </thead>
+    
+    <tbody>
+    
+    <%=f.fields_for(:memberships) do |u|-%>
+      <%=for m in @group.memberships do  -%> 
+      <tr> 
+          <td>
+            <div data-action="change->expense#hideAmount" data-expense-target="amountHead">
+              <%i+=1
+                if(m.user.id == current_user)
+                  index = i
+                end
+              %>
+              <%= m.user.id==current_user.id ? (check_box_tag 'id[]',m.id, true,disabled: true) : (check_box_tag 'id[]',m.id)%>
+            </div>
+          </td>
+          <td>
+            <%=m.user.name%>
+          </td>
+          <td>
+            <div data-expense-target= "amount" data-action = "input->expense#handleSubmit"> 
+              <%= number_field_tag 'amount[]',m.amount
+              #u.input :amount, multiple: true, input_html:{"data-action": "click->expense#control"}
+              %>
+            </div>
+          </td>
+          <td>
+            <%= m.user.id==current_user.id ? (check_box_tag 'set[]',m.id, true,disabled: true) : (check_box_tag 'set[]',m.id)%>
+          </td>
+        </tr>
+      <div class = "hidden"><%end%></div>
+    <%end%>
+  </tbody>
+  </table>
+    <div class="form-actions" data-expense-target = "button" data-action = "click->expense#handle">
+      <%= f.button :submit, class:"btn btn-primary", disabled: true %>
+    </div>
+  <% end %>
+</div>

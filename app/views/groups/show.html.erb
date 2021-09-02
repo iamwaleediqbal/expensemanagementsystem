@@ -1,0 +1,46 @@
+<div data-controller="group">
+<p>
+  <strong>Group Name:</strong>
+  <%= @group.name%>
+</p>
+
+  <%= button_to 'Add New Group Expense', new_group_group_expense_path(@group),class: " large btn btn-primary btn-floating btn-custom",:method => :get %>
+  
+  <br>
+  <strong>Members:</strong>
+  
+  <table class = "table table-striped table-bordered table-hover table-sm" border="10" width = "500">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @names.each do |group| %>
+      <tr>
+        <td><%= group.user.name %></td>
+        <td><%= link_to 'Remove', group, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger' %></td>
+
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+  
+<br>
+<button data-action = "click->group#addfield" class= 'btn btn-info'>Add Member</button>
+<br>
+<%=simple_form_for(:user, html: { method: :put }) do |f|%>
+<div class= "hidden" data-group-target= "add">
+<%=f.input :email%>
+<div data-action = "change->group#hidefield">
+<%=f.button :submit, input_html:{ "data-action": "click->group#hidefield", }, class: 'btn btn-success'%>
+<br>
+</div>
+</div>
+<%end%>
+<br>
+<%= link_to 'Edit', edit_group_path(@group), class: 'btn btn-primary' %> |
+<%= link_to 'Back', groups_path, class: 'btn btn-primary' %>
+</div>
