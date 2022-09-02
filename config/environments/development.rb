@@ -73,8 +73,8 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
   config.action_mailer.perform_deliveries = true
   config.action_mailer.smtp_settings = {
-    user_name:      "waleediqbal28@gmail.com",
-    password:       "mynamewaleed",
+    user_name:      "ENV['GMAIL_USERNAME']",
+    password:       "ENV['GMAIL_PASSWORD']",
     domain:         "localhost:3000",
     address:       'smtp.gmail.com',
     port:          '587',
