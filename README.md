@@ -32,7 +32,7 @@ git clone https://github.com/iamwaleediqbal/expensemanagementsystem.git
 2. Install the required dependencies using bundle:
 
 ```
-cd expense-management-system-devise
+cd expensemanagementsystem
 bundle install
 ```
 
